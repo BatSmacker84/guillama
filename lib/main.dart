@@ -1,69 +1,50 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 
-void main() {
-  runApp(const MyApp());
+import 'package:guillama/shared/data.dart';
+import 'package:guillama/pages/home.dart';
+
+// Main function is async so we can await the initialization
+// of the persistent data before running the app
+Future<void> main() async {
+  // Ensure the widgets binding is initialized for splash screen
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  // Ensure the app is in portrait mode
+  // This shouldn't affect tablets, as they are usually in landscape mode
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
+  // Initialize the persistent data
+  await Prefs.init();
+
+  // Remove the splash screen
+  FlutterNativeSplash.remove();
+
+  // Run the app
+  runApp(const GUILlama());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class GUILlama extends StatefulWidget {
+  const GUILlama({super.key});
+
+  @override
+  State<GUILlama> createState() => _GUILlamaState();
+}
+
+class _GUILlamaState extends State<GUILlama> {
+  bool starting = true;
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'GUILlama',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),
+      darkTheme: ThemeData.dark(),
+      home: const Home(),
     );
   }
 }
