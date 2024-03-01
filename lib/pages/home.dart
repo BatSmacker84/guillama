@@ -3,6 +3,7 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
 import 'package:guillama/pages/chat.dart';
 import 'package:guillama/pages/settings.dart';
+import 'package:guillama/shared/api.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -12,17 +13,19 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  List<String>? models;
-
-  // This needs to be captured here in a stateful widget
   late PlatformTabController tabController;
-
-  late List<Widget> tabs;
+  bool connecting = true;
 
   @override
   void initState() {
     super.initState();
     tabController = PlatformTabController(initialIndex: 0);
+
+    API.connect().then((value) {
+      setState(() {
+        connecting = false;
+      });
+    });
   }
 
   @override

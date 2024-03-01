@@ -15,8 +15,7 @@ class Chat extends StatefulWidget {
 }
 
 class _ChatState extends State<Chat> {
-  late List<String>? models;
-  bool loading = true;
+  List<String>? models;
 
   @override
   void initState() {
@@ -25,7 +24,6 @@ class _ChatState extends State<Chat> {
     API.listModels().then((value) {
       setState(() {
         models = value;
-        loading = false;
       });
     });
   }
@@ -36,14 +34,15 @@ class _ChatState extends State<Chat> {
       appBar: PlatformAppBar(
         title: PlatformText('Chat'),
       ),
-      body: loading
+      body: models == null
           ? Center(child: PlatformCircularProgressIndicator())
           : ListView.builder(
               itemCount: models?.length ?? 0,
               itemBuilder: (context, index) {
                 return PlatformText(models![index],
                     textAlign: TextAlign.center);
-              }),
+              },
+            ),
     );
   }
 }

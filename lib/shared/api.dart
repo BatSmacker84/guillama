@@ -6,10 +6,16 @@ import 'package:guillama/shared/data.dart';
 // API class to handle all the API calls
 class API {
   // Connect to the ollama server
-  static Future<bool> connect(String url) async {
+  static Future<bool> connect() async {
     // Create a new Dio instance
     final dio = Dio();
     dio.httpClientAdapter = NativeAdapter();
+
+    // Construct the url from server address and port
+    final http = Prefs.getBool('https') ?? false ? 'https' : 'http';
+    final serverAddress = Prefs.getString('serverAddress') ?? 'localhost';
+    final serverPort = Prefs.getInt('serverPort') ?? 11434;
+    final url = '$http://$serverAddress:$serverPort';
 
     // Send a GET request to the server
     final response = await dio.get(url);

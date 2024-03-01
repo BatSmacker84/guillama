@@ -41,7 +41,11 @@ class _StartState extends State<Start> {
       connecting = true;
     });
 
-    final result = await API.connect(url);
+    Prefs.setBool('https', https);
+    Prefs.setString('serverAddress', serverAddress);
+    Prefs.setInt('serverPort', serverPort);
+
+    final result = await API.connect();
 
     setState(() {
       connecting = false;
@@ -56,9 +60,6 @@ class _StartState extends State<Start> {
 
   void toHome() {
     Prefs.setBool('hasStarted', false);
-    Prefs.setBool('https', https);
-    Prefs.setString('serverAddress', serverAddress);
-    Prefs.setInt('serverPort', serverPort);
     Beamer.of(context).beamToNamed('/');
   }
 
