@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
-import 'package:guillama/shared/api.dart';
+import 'package:guillama/pages/chat.dart';
+import 'package:guillama/pages/settings.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -12,49 +14,40 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   List<String>? models;
 
+  // This needs to be captured here in a stateful widget
+  late PlatformTabController tabController;
+
+  late List<Widget> tabs;
+
   @override
   void initState() {
     super.initState();
-    API.listModels().then((value) {
-      setState(() {
-        models = value;
-      });
-    });
+    tabController = PlatformTabController(initialIndex: 0);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text('GUILlama'),
+    return PlatformTabScaffold(
+      tabController: tabController,
+      bodyBuilder: (context, index) => IndexedStack(
+        index: index,
+        children: const [
+          Chat(),
+          Settings(),
+        ],
       ),
-      body: models == null
-          ? const Center(child: CircularProgressIndicator())
-          : _buildList(),
-    );
-  }
-
-  Widget _buildList() {
-    return RefreshIndicator(
-      onRefresh: () async {
-        setState(() {
-          models = null;
-        });
-        API.listModels().then((value) {
-          setState(() {
-            models = value;
-          });
-        });
-      },
-      child: ListView.builder(
-        itemCount: models!.length,
-        itemBuilder: (BuildContext context, int index) {
-          return ListTile(
-            title: Text(models![index]),
-          );
-        },
-      ),
+      items: [
+        BottomNavigationBarItem(
+            label: 'Chat',
+            icon: Icon(context.platformIcons.conversationBubbleOutline),
+            activeIcon: Icon(context.platformIcons.conversationBubble),
+            tooltip: 'Chat with AI models'),
+        BottomNavigationBarItem(
+            label: 'Settings',
+            icon: Icon(context.platformIcons.settings),
+            activeIcon: Icon(context.platformIcons.settingsSolid),
+            tooltip: 'Change settings'),
+      ],
     );
   }
 }
