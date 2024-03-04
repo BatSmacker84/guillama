@@ -9,6 +9,9 @@ import 'package:guillama/shared/api.dart';
 import 'package:guillama/shared/data.dart';
 import 'package:guillama/pages/start.dart';
 import 'package:guillama/pages/home.dart';
+import 'package:guillama/pages/settings.dart';
+import 'package:guillama/pages/chat.dart';
+import 'package:guillama/pages/new.dart';
 
 // Main function is async so we can await the initialization
 // of the persistent data before running the app
@@ -47,9 +50,19 @@ class _GUILlamaState extends State<GUILlama> {
   final routerDelegate = BeamerDelegate(
     locationBuilder: RoutesLocationBuilder(
       routes: {
-        // Return either Widgets or BeamPages if more customization is needed
-        '/': (context, state, data) => const Home(),
-        '/start': (context, state, data) => const Start(),
+        '/': (context, state, data) => const Home(key: ValueKey('home')),
+        '/start': (context, state, data) => const Start(key: ValueKey('start')),
+        '/settings': (context, state, data) =>
+            const Settings(key: ValueKey('settings')),
+        '/new': (context, state, data) => const New(key: ValueKey('new')),
+        '/chats/:chatID': (context, state, data) {
+          final chatID = state.pathParameters['chatID'];
+          return BeamPage(
+            key: ValueKey('chat-$chatID'),
+            popToNamed: '/',
+            child: Chat(chatID: int.parse(chatID!)),
+          );
+        }
       },
     ).call,
     guards: [
