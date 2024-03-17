@@ -48,10 +48,11 @@ class API {
     final http = Prefs.getBool('https') ?? false ? 'https' : 'http';
     final serverAddress = Prefs.getString('serverAddress') ?? 'localhost';
     final serverPort = Prefs.getInt('serverPort') ?? 11434;
-    final url = '$http://$serverAddress:$serverPort';
+    final url = '$http://$serverAddress:$serverPort/api/tags';
 
     // Send a GET request to the server
     final response = await dio.get(url);
+    print(response.data);
 
     // Parse JSON response
     final List<String> models = [];
@@ -73,7 +74,7 @@ class API {
     final http = Prefs.getBool('https') ?? false ? 'https' : 'http';
     final serverAddress = Prefs.getString('serverAddress') ?? 'localhost';
     final serverPort = Prefs.getInt('serverPort') ?? 11434;
-    final url = '$http://$serverAddress:$serverPort';
+    final url = '$http://$serverAddress:$serverPort/api/show';
 
     // Prepare the request body
     final body = {'model': modelID};
@@ -102,7 +103,7 @@ class API {
     final http = Prefs.getBool('https') ?? false ? 'https' : 'http';
     final serverAddress = Prefs.getString('serverAddress') ?? 'localhost';
     final serverPort = Prefs.getInt('serverPort') ?? 11434;
-    final url = '$http://$serverAddress:$serverPort';
+    final url = '$http://$serverAddress:$serverPort/api/copy';
 
     // Prepare the request body
     final body = {
@@ -127,7 +128,7 @@ class API {
     final http = Prefs.getBool('https') ?? false ? 'https' : 'http';
     final serverAddress = Prefs.getString('serverAddress') ?? 'localhost';
     final serverPort = Prefs.getInt('serverPort') ?? 11434;
-    final url = '$http://$serverAddress:$serverPort';
+    final url = '$http://$serverAddress:$serverPort/api/delete';
 
     // Prepare the request body
     final body = {'name': modelID};
