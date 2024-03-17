@@ -54,7 +54,55 @@ class _ModelsSettingsState extends State<ModelsSettings> {
           PlatformIconButton(
             icon: Icon(context.platformIcons.add),
             onPressed: () {
-              print('Add');
+              showPlatformDialog(
+                  context: context,
+                  builder: (context) {
+                    TextEditingController nameController =
+                        TextEditingController();
+                    TextEditingController tagController =
+                        TextEditingController();
+                    return PlatformAlertDialog(
+                      title: PlatformText('Pull Model'),
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const SizedBox(height: 5),
+                          PlatformTextField(
+                            controller: nameController,
+                            hintText: 'Name',
+                          ),
+                          const SizedBox(height: 5),
+                          PlatformTextField(
+                            controller: tagController,
+                            hintText: 'Tag (optional)',
+                          ),
+                        ],
+                      ),
+                      actions: [
+                        PlatformDialogAction(
+                          child: PlatformText('Cancel'),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        PlatformDialogAction(
+                          child: PlatformText('Pull'),
+                          onPressed: () {
+                            if (nameController.text.isEmpty) {
+                              print('Name cannot be empty');
+                            } else {
+                              if (tagController.text.isEmpty) {
+                                tagController.text = 'latest';
+                              }
+                              print(
+                                  'Pulling ${nameController.text}:${tagController.text}');
+                              Navigator.of(context).pop();
+                            }
+                          },
+                        ),
+                      ],
+                    );
+                  });
             },
           ),
         ],
