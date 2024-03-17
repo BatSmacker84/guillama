@@ -5,22 +5,27 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'model.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(includeIfNull: false)
 class Model {
-  final String name;
   final String format;
   final String family;
-  final List<String> families;
+  final List<String>? families;
   final String parameter_size;
   final String quantization_level;
 
+  @JsonKey(includeFromJson: false)
+  String? name;
+  @JsonKey(includeFromJson: false)
+  String? tag;
+
   Model({
-    required this.name,
     required this.format,
     required this.family,
-    required this.families,
+    this.families,
     required this.parameter_size,
     required this.quantization_level,
+    this.name,
+    this.tag,
   });
 
   factory Model.fromJson(Map<String, dynamic> json) => _$ModelFromJson(json);

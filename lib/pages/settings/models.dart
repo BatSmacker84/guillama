@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:beamer/beamer.dart';
 
 import 'package:guillama/shared/api.dart';
 import 'package:guillama/shared/data.dart';
+import 'package:guillama/models/model.dart';
 
 class ModelsSettings extends StatefulWidget {
   const ModelsSettings({super.key});
@@ -13,6 +15,7 @@ class ModelsSettings extends StatefulWidget {
 
 class _ModelsSettingsState extends State<ModelsSettings> {
   List<String>? models;
+  Map<String, List<String>>? sortedModels;
 
   @override
   void initState() {
@@ -22,6 +25,23 @@ class _ModelsSettingsState extends State<ModelsSettings> {
       setState(() {
         models = value;
       });
+      sortModels();
+    });
+  }
+
+  void sortModels() {
+    final Map<String, List<String>> sorted = {};
+    for (final model in models ?? []) {
+      final name = model.split(':')[0];
+      final tag = model.split(':')[1];
+      if (sorted.containsKey(name)) {
+        sorted[name]!.add(tag);
+      } else {
+        sorted[name] = [tag];
+      }
+    }
+    setState(() {
+      sortedModels = sorted;
     });
   }
 
@@ -30,16 +50,114 @@ class _ModelsSettingsState extends State<ModelsSettings> {
     return PlatformScaffold(
       appBar: PlatformAppBar(
         title: PlatformText('Models'),
+        trailingActions: [
+          PlatformIconButton(
+            icon: Icon(context.platformIcons.add),
+            onPressed: () {
+              print('Add');
+            },
+          ),
+        ],
       ),
-      body: ListView.separated(
-        itemCount: models?.length ?? 0,
-        separatorBuilder: (context, index) => const Divider(),
-        itemBuilder: (context, index) {
-          return PlatformListTile(
-            title: PlatformText(models?[index] ?? 'Loading...'),
-          );
-        },
+      body: sortedModels == null
+          ? Center(
+              child: PlatformCircularProgressIndicator(),
+            )
+          : Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: ListView.builder(
+                itemCount: sortedModels?.length ?? 0,
+                itemBuilder: (context, index) => Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    buildModelName(sortedModels!.keys.elementAt(index)),
+                    buildModelTags(sortedModels!.keys.elementAt(index)),
+                  ],
+                ),
+              ),
+            ),
+    );
+  }
+
+  Widget buildModelName(String name) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          PlatformText(
+            name,
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 10),
+          const Divider(height: 0),
+        ],
       ),
+    );
+  }
+
+  Widget buildModelTags(String name) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        for (final tag in sortedModels![name]!)
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              PlatformListTile(
+                title: PlatformText(tag),
+                trailing: Icon(context.platformIcons.rightChevron),
+                onTap: () {
+                  Beamer.of(context).beamToNamed('/settings/models/$name:$tag');
+                },
+              ),
+              const Divider(height: 0),
+            ],
+          ),
+      ],
+    );
+  }
+}
+
+class ModelInfo extends StatefulWidget {
+  const ModelInfo({super.key, required this.modelID});
+
+  final String modelID;
+
+  @override
+  State<ModelInfo> createState() => _ModelInfoState();
+}
+
+class _ModelInfoState extends State<ModelInfo> {
+  Model? model;
+
+  @override
+  void initState() {
+    super.initState();
+
+    API.showModel(widget.modelID).then((value) {
+      setState(() {
+        model = value;
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return PlatformScaffold(
+      appBar: PlatformAppBar(
+        title: PlatformText(widget.modelID),
+      ),
+      body: model == null
+          ? Center(
+              child: PlatformCircularProgressIndicator(),
+            )
+          : Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Center(
+                child: PlatformText(model!.name ?? ''),
+              ),
+            ),
     );
   }
 }

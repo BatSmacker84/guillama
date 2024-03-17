@@ -63,7 +63,7 @@ class API {
   }
 
   // Get information about a specific model
-  static Future<Model> showModel(String modelName) async {
+  static Future<Model> showModel(String modelID) async {
     // Create a new Dio instance
     final dio = Dio();
     dio.httpClientAdapter = NativeAdapter();
@@ -74,13 +74,17 @@ class API {
     final url = 'http://$serverAddress:$serverPort/api/show';
 
     // Prepare the request body
-    final body = {'model': modelName};
+    final body = {'model': modelID};
 
     // Send a POST request to the server
     final response = await dio.post(url, data: body);
 
     // Parse JSON response
-    final model = Model.fromJson(response.data);
+    final model = Model.fromJson(response.data['details']);
+
+    // Add name and tag to the model
+    model.name = modelID.split(':')[0];
+    model.tag = modelID.split(':')[1];
 
     // Return the model
     return model;
