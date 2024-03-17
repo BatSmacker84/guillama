@@ -161,6 +161,66 @@ class _ModelInfoState extends State<ModelInfo> {
       iosContentPadding: true,
       appBar: PlatformAppBar(
         title: PlatformText(widget.modelID),
+        trailingActions: [
+          PlatformPopupMenu(
+            options: [
+              PopupMenuOption(
+                label: 'Duplicate',
+                onTap: (_) {
+                  showPlatformDialog(
+                    context: context,
+                    builder: (context) {
+                      TextEditingController controller =
+                          TextEditingController(text: '${model!.name!}_copy');
+                      return PlatformAlertDialog(
+                        title: PlatformText('Duplicate Model'),
+                        content: PlatformTextField(
+                          controller: controller,
+                        ),
+                        actions: [
+                          PlatformDialogAction(
+                            child: PlatformText('Cancel'),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                          PlatformDialogAction(
+                            child: PlatformText('Duplicate'),
+                            onPressed: () {
+                              API
+                                  .copyModel(
+                                widget.modelID,
+                                '${controller.text}:${model!.tag!}',
+                              )
+                                  .then((value) {
+                                if (value) {
+                                  Beamer.of(context).beamBack();
+                                }
+                              });
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+              ),
+              PopupMenuOption(
+                label: 'Delete',
+                onTap: (_) {
+                  API.deleteModel(widget.modelID).then((value) {
+                    if (value) {
+                      Beamer.of(context).beamBack();
+                    }
+                  });
+                },
+              ),
+            ],
+            icon: Icon(
+              context.platformIcons.ellipsis,
+            ),
+          ),
+        ],
       ),
       body: model == null
           ? Center(

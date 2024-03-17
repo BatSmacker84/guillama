@@ -89,4 +89,49 @@ class API {
     // Return the model
     return model;
   }
+
+  // Copy/Duplicate a specified model with a new name
+  static Future<bool> copyModel(String srcModelID, String destModelID) async {
+    // Create a new Dio instance
+    final dio = Dio();
+    dio.httpClientAdapter = NativeAdapter();
+
+    // Construct the url from server address and port
+    final serverAddress = Prefs.getString('serverAddress') ?? 'localhost';
+    final serverPort = Prefs.getInt('serverPort') ?? 11434;
+    final url = 'http://$serverAddress:$serverPort/api/copy';
+
+    // Prepare the request body
+    final body = {
+      'source': srcModelID,
+      'destination': destModelID,
+    };
+
+    // Send a POST request to the server
+    final response = await dio.post(url, data: body);
+
+    // If the response is 200, the model was copied
+    return response.statusCode == 200;
+  }
+
+  // Delete a specified model
+  static Future<bool> deleteModel(String modelID) async {
+    // Create a new Dio instance
+    final dio = Dio();
+    dio.httpClientAdapter = NativeAdapter();
+
+    // Construct the url from server address and port
+    final serverAddress = Prefs.getString('serverAddress') ?? 'localhost';
+    final serverPort = Prefs.getInt('serverPort') ?? 11434;
+    final url = 'http://$serverAddress:$serverPort/api/delete';
+
+    // Prepare the request body
+    final body = {'name': modelID};
+
+    // Send a DELETE request to the server
+    final response = await dio.delete(url, data: body);
+
+    // If the response is 200, the model was deleted
+    return response.statusCode == 200;
+  }
 }
