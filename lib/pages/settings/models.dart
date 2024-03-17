@@ -65,14 +65,27 @@ class _ModelsSettingsState extends State<ModelsSettings> {
             )
           : Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: ListView.builder(
-                itemCount: sortedModels?.length ?? 0,
-                itemBuilder: (context, index) => Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    buildModelName(sortedModels!.keys.elementAt(index)),
-                    buildModelTags(sortedModels!.keys.elementAt(index)),
-                  ],
+              child: RefreshIndicator.adaptive(
+                onRefresh: () async {
+                  setState(() {
+                    sortedModels = null;
+                  });
+                  await API.listModels().then((value) {
+                    setState(() {
+                      models = value;
+                    });
+                    sortModels();
+                  });
+                },
+                child: ListView.builder(
+                  itemCount: sortedModels?.length ?? 0,
+                  itemBuilder: (context, index) => Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      buildModelName(sortedModels!.keys.elementAt(index)),
+                      buildModelTags(sortedModels!.keys.elementAt(index)),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -145,6 +158,7 @@ class _ModelInfoState extends State<ModelInfo> {
   @override
   Widget build(BuildContext context) {
     return PlatformScaffold(
+      iosContentPadding: true,
       appBar: PlatformAppBar(
         title: PlatformText(widget.modelID),
       ),
@@ -154,8 +168,32 @@ class _ModelInfoState extends State<ModelInfo> {
             )
           : Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Center(
-                child: PlatformText(model!.name ?? ''),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 20),
+                  PlatformText('Name: ${model!.name}'),
+                  const SizedBox(height: 10),
+                  PlatformText('Tag: ${model!.tag}'),
+                  const SizedBox(height: 10),
+                  PlatformText('Format: ${model!.format}'),
+                  const SizedBox(height: 10),
+                  PlatformText('Family: ${model!.family}'),
+                  const SizedBox(height: 10),
+                  if (model!.families != null)
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        PlatformText(
+                            'Families: ${model!.families!.join(', ')}'),
+                        const SizedBox(height: 10),
+                      ],
+                    ),
+                  PlatformText('Parameter Size: ${model!.parameter_size}'),
+                  const SizedBox(height: 10),
+                  PlatformText(
+                      'Quantization Level: ${model!.quantization_level}'),
+                ],
               ),
             ),
     );
