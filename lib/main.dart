@@ -89,10 +89,15 @@ class _GUILlamaState extends State<GUILlama> {
       builder: (context) => PlatformTheme(
         themeMode: ThemeMode.system,
         materialLightTheme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          colorScheme: ColorScheme.fromSeed(
+              seedColor: Colors.deepPurple, brightness: Brightness.light),
           useMaterial3: true,
         ),
-        materialDarkTheme: ThemeData.dark(),
+        materialDarkTheme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(
+              seedColor: Colors.deepPurple, brightness: Brightness.dark),
+          useMaterial3: true,
+        ),
         cupertinoLightTheme: const CupertinoThemeData(
             brightness: Brightness.light, primaryColor: Colors.deepPurple),
         cupertinoDarkTheme: const CupertinoThemeData(
