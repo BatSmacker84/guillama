@@ -52,7 +52,6 @@ class API {
 
     // Send a GET request to the server
     final response = await dio.get(url);
-    print(response.data);
 
     // Parse JSON response
     final List<String> models = [];
