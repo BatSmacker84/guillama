@@ -61,25 +61,7 @@ class _HomeState extends State<Home> {
       ),
       body: !connected
           ? Center(child: PlatformCircularProgressIndicator())
-          : ListView.builder(
-              itemCount: models?.length ?? 0,
-              itemBuilder: (context, index) {
-                return PlatformListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: Colors.grey,
-                    radius: 32,
-                    child: PlatformText(
-                      models![index][0].toUpperCase(),
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  title: PlatformText(models![index]),
-                  onTap: () {
-                    Beamer.of(context).beamToNamed('/chats/$index');
-                  },
-                );
-              },
-            ),
+          : Center(child: PlatformText('Chats')),
     );
   }
 }
