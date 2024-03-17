@@ -1,5 +1,8 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:guillama/models/model.dart';
+import 'package:guillama/models/message.dart';
+
 // Stores persistent data using SharedPreferences
 class Prefs {
   static late SharedPreferences _prefs;
@@ -57,4 +60,8 @@ class Prefs {
   static Future<void> removeAll() async {
     await _prefs.clear();
   }
+
+  // Application specific data
+  static List<Model> models = [];
+  static Map<String, List<Message>> messages = {};
 }

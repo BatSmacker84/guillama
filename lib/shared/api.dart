@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:guillama/models/model.dart';
 import 'package:native_dio_adapter/native_dio_adapter.dart';
 
 import 'package:guillama/shared/data.dart';
@@ -16,6 +17,19 @@ class API {
     final serverAddress = Prefs.getString('serverAddress') ?? 'localhost';
     final serverPort = Prefs.getInt('serverPort') ?? 11434;
     final url = '$http://$serverAddress:$serverPort';
+
+    // Send a GET request to the server
+    final response = await dio.get(url);
+
+    // If the response is 200, the server is reachable
+    return response.statusCode == 200;
+  }
+
+  // Test connection to the ollama server
+  static Future<bool> testConnection(String url) async {
+    // Create a new Dio instance
+    final dio = Dio();
+    dio.httpClientAdapter = NativeAdapter();
 
     // Send a GET request to the server
     final response = await dio.get(url);
@@ -48,16 +62,27 @@ class API {
     return models;
   }
 
-  static Future<bool> sendMessage(String chat, String message) async {
+  // Get information about a specific model
+  static Future<Model> showModel(String modelName) async {
+    // Create a new Dio instance
     final dio = Dio();
     dio.httpClientAdapter = NativeAdapter();
 
+    // Construct the url from server address and port
     final serverAddress = Prefs.getString('serverAddress') ?? 'localhost';
-    final serverPort = Prefs.getString('serverPort') ?? '11434';
-    final url = 'http://$serverAddress:$serverPort/api/chat/$chat';
+    final serverPort = Prefs.getInt('serverPort') ?? 11434;
+    final url = 'http://$serverAddress:$serverPort/api/show';
 
-    final response = await dio.post(url, data: {'message': message});
+    // Prepare the request body
+    final body = {'model': modelName};
 
-    return response.statusCode == 200;
+    // Send a POST request to the server
+    final response = await dio.post(url, data: body);
+
+    // Parse JSON response
+    final model = Model.fromJson(response.data);
+
+    // Return the model
+    return model;
   }
 }

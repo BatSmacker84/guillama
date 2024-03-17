@@ -9,9 +9,11 @@ import 'package:guillama/shared/api.dart';
 import 'package:guillama/shared/data.dart';
 import 'package:guillama/pages/start.dart';
 import 'package:guillama/pages/home.dart';
-import 'package:guillama/pages/settings.dart';
-import 'package:guillama/pages/chat.dart';
-import 'package:guillama/pages/new.dart';
+import 'package:guillama/pages/settings/settings.dart';
+import 'package:guillama/pages/settings/server.dart';
+import 'package:guillama/pages/settings/models.dart';
+import 'package:guillama/pages/chat/chat.dart';
+import 'package:guillama/pages/chat/new.dart';
 
 // Main function is async so we can await the initialization
 // of the persistent data before running the app
@@ -54,6 +56,12 @@ class _GUILlamaState extends State<GUILlama> {
         '/start': (context, state, data) => const Start(key: ValueKey('start')),
         '/settings': (context, state, data) =>
             const Settings(key: ValueKey('settings')),
+        '/settings/server': (context, state, data) => const ServerSettings(
+              key: ValueKey('server'),
+            ),
+        '/settings/models': (context, state, data) => const ModelsSettings(
+              key: ValueKey('models'),
+            ),
         '/new': (context, state, data) => const New(key: ValueKey('new')),
         '/chats/:chatID': (context, state, data) {
           final chatID = state.pathParameters['chatID'];
