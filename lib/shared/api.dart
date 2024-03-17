@@ -45,9 +45,10 @@ class API {
     dio.httpClientAdapter = NativeAdapter();
 
     // Construct the url from server address and port
+    final http = Prefs.getBool('https') ?? false ? 'https' : 'http';
     final serverAddress = Prefs.getString('serverAddress') ?? 'localhost';
     final serverPort = Prefs.getInt('serverPort') ?? 11434;
-    final url = 'http://$serverAddress:$serverPort/api/tags';
+    final url = '$http://$serverAddress:$serverPort';
 
     // Send a GET request to the server
     final response = await dio.get(url);
@@ -69,9 +70,10 @@ class API {
     dio.httpClientAdapter = NativeAdapter();
 
     // Construct the url from server address and port
+    final http = Prefs.getBool('https') ?? false ? 'https' : 'http';
     final serverAddress = Prefs.getString('serverAddress') ?? 'localhost';
     final serverPort = Prefs.getInt('serverPort') ?? 11434;
-    final url = 'http://$serverAddress:$serverPort/api/show';
+    final url = '$http://$serverAddress:$serverPort';
 
     // Prepare the request body
     final body = {'model': modelID};
@@ -97,9 +99,10 @@ class API {
     dio.httpClientAdapter = NativeAdapter();
 
     // Construct the url from server address and port
+    final http = Prefs.getBool('https') ?? false ? 'https' : 'http';
     final serverAddress = Prefs.getString('serverAddress') ?? 'localhost';
     final serverPort = Prefs.getInt('serverPort') ?? 11434;
-    final url = 'http://$serverAddress:$serverPort/api/copy';
+    final url = '$http://$serverAddress:$serverPort';
 
     // Prepare the request body
     final body = {
@@ -121,9 +124,10 @@ class API {
     dio.httpClientAdapter = NativeAdapter();
 
     // Construct the url from server address and port
+    final http = Prefs.getBool('https') ?? false ? 'https' : 'http';
     final serverAddress = Prefs.getString('serverAddress') ?? 'localhost';
     final serverPort = Prefs.getInt('serverPort') ?? 11434;
-    final url = 'http://$serverAddress:$serverPort/api/delete';
+    final url = '$http://$serverAddress:$serverPort';
 
     // Prepare the request body
     final body = {'name': modelID};
