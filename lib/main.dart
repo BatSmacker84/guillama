@@ -93,10 +93,10 @@ class _GUILlamaState extends State<GUILlama> {
           useMaterial3: true,
         ),
         materialDarkTheme: ThemeData.dark(),
-        cupertinoLightTheme:
-            const CupertinoThemeData(primaryColor: Colors.deepPurple),
-        cupertinoDarkTheme:
-            const CupertinoThemeData(brightness: Brightness.dark),
+        cupertinoLightTheme: const CupertinoThemeData(
+            brightness: Brightness.light, primaryColor: Colors.deepPurple),
+        cupertinoDarkTheme: const CupertinoThemeData(
+            brightness: Brightness.dark, primaryColor: Colors.deepPurple),
         builder: (context) => PlatformApp.router(
           localizationsDelegates: const <LocalizationsDelegate<dynamic>>[
             DefaultMaterialLocalizations.delegate,
