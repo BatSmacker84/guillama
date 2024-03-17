@@ -75,7 +75,7 @@ class _HomeState extends State<Home> {
                   ),
                   title: PlatformText(models![index]),
                   onTap: () {
-                    Beamer.of(context).beamToNamed('/chats/${index + 1}');
+                    Beamer.of(context).beamToNamed('/chats/$index');
                   },
                 );
               },
