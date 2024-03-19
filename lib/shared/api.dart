@@ -1,8 +1,10 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
-import 'package:guillama/models/model.dart';
 import 'package:native_dio_adapter/native_dio_adapter.dart';
 
 import 'package:guillama/shared/data.dart';
+import 'package:guillama/models/model.dart';
 
 // API class to handle all the API calls
 class API {
@@ -90,6 +92,32 @@ class API {
 
     // Return the model
     return model;
+  }
+
+  // Pull a new model from ollama.com
+  static Stream<dynamic> pullModel(String modelID) async* {
+    // Create a new Dio instance
+    final dio = Dio();
+    dio.httpClientAdapter = NativeAdapter();
+
+    // Construct the url from server address and port
+    final http = Prefs.getBool('https') ?? false ? 'https' : 'http';
+    final serverAddress = Prefs.getString('serverAddress') ?? 'localhost';
+    final serverPort = Prefs.getInt('serverPort') ?? 11434;
+    final url = '$http://$serverAddress:$serverPort/api/pull';
+
+    // Prepare the request body
+    final body = {'name': modelID};
+
+    // Send a POST request to the server
+    final response = await dio.post<ResponseBody>(url,
+        data: body, options: Options(responseType: ResponseType.stream));
+
+    // Yield the response
+    yield* utf8.decoder
+        .bind(response.data!.stream)
+        .transform(const LineSplitter())
+        .map((line) => jsonDecode(line));
   }
 
   // Copy/Duplicate a specified model with a new name

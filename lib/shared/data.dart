@@ -64,4 +64,9 @@ class Prefs {
   // Application specific data
   static List<Model> models = [];
   static Map<String, List<Message>> messages = {};
+  static Map<String, Stream<dynamic>> downloads = {};
+
+  static void addDownload(String modelID, Stream<dynamic> stream) {
+    downloads[modelID] = stream;
+  }
 }

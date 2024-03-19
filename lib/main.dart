@@ -12,6 +12,7 @@ import 'package:guillama/pages/home.dart';
 import 'package:guillama/pages/settings/settings.dart';
 import 'package:guillama/pages/settings/server.dart';
 import 'package:guillama/pages/settings/models.dart';
+import 'package:guillama/pages/settings/downloads.dart';
 import 'package:guillama/pages/chat/chat.dart';
 import 'package:guillama/pages/chat/new.dart';
 
@@ -61,6 +62,11 @@ class _GUILlamaState extends State<GUILlama> {
             ),
         '/settings/models': (context, state, data) => const ModelsSettings(
               key: ValueKey('models'),
+            ),
+        '/settings/downloads': (context, state, data) => const BeamPage(
+              key: ValueKey('downloads'),
+              popToNamed: '/settings/models',
+              child: Downloads(),
             ),
         '/settings/models/:modelID': (context, state, data) {
           final modelID = state.pathParameters['modelID'];
