@@ -7,7 +7,7 @@ import 'package:guillama/shared/api.dart';
 class Chat extends StatefulWidget {
   const Chat({super.key, required this.chatID});
 
-  final int chatID;
+  final String chatID;
 
   @override
   State<Chat> createState() => _ChatState();

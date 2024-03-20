@@ -71,18 +71,26 @@ class _GUILlamaState extends State<GUILlama> {
         '/settings/models/:modelID': (context, state, data) {
           final modelID = state.pathParameters['modelID'];
           return BeamPage(
-            key: ValueKey('model-$modelID'),
+            key: ValueKey('info-$modelID'),
             popToNamed: '/settings/models',
             child: ModelInfo(modelID: modelID!),
           );
         },
         '/new': (context, state, data) => const New(key: ValueKey('new')),
+        '/new/:modelID': (context, state, data) {
+          final modelID = state.pathParameters['modelID'];
+          return BeamPage(
+            key: ValueKey('new-$modelID'),
+            popToNamed: '/new',
+            child: NewChat(modelID: modelID!),
+          );
+        },
         '/chats/:chatID': (context, state, data) {
           final chatID = state.pathParameters['chatID'];
           return BeamPage(
             key: ValueKey('chat-$chatID'),
             popToNamed: '/',
-            child: Chat(chatID: int.parse(chatID!)),
+            child: Chat(chatID: chatID!),
           );
         }
       },

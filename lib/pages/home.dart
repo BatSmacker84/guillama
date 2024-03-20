@@ -3,6 +3,7 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:beamer/beamer.dart';
 
 import 'package:guillama/shared/api.dart';
+import 'package:guillama/shared/data.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -12,25 +13,13 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  bool connected = false;
-
-  List<String>? models;
+  List<String>? chats;
 
   @override
   void initState() {
     super.initState();
 
-    API.connect().then((value) {
-      setState(() {
-        connected = value;
-      });
-    });
-
-    API.listModels().then((value) {
-      setState(() {
-        models = value;
-      });
-    });
+    chats = Prefs.getStringList('chats');
   }
 
   @override
@@ -59,9 +48,20 @@ class _HomeState extends State<Home> {
           ),
         ],
       ),
-      body: !connected
+      body: chats == null
           ? Center(child: PlatformCircularProgressIndicator())
-          : Center(child: PlatformText('Chats')),
+          : ListView.builder(
+              itemCount: chats!.length,
+              itemBuilder: (context, index) {
+                return PlatformListTile(
+                  title: PlatformText(chats![index].split('_')[1]),
+                  onTap: () {
+                    Beamer.of(context)
+                        .beamToNamed('/chats/chat-${chats![index]}');
+                  },
+                );
+              },
+            ),
     );
   }
 }

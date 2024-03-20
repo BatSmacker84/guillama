@@ -69,4 +69,11 @@ class Prefs {
   static void addDownload(String modelID, Stream<dynamic> stream) {
     downloads[modelID] = stream;
   }
+
+  static void createChat(String modelID, String chatName) {
+    String chatID = '${modelID}_$chatName';
+    addToStringList('chats', chatID);
+    messages[chatID] = [];
+    setStringList(chatID, []);
+  }
 }
