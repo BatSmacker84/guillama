@@ -120,7 +120,7 @@ class _ChatState extends State<Chat> {
                                             color: Colors.white),
                                       ),
                                     ),
-                              generating && index == allMessages!.length - 1
+                              generating && index == 0
                                   ? Padding(
                                       padding: const EdgeInsets.all(10),
                                       child:
@@ -209,7 +209,10 @@ class _ChatState extends State<Chat> {
         allMessages!.last.content = 'Error: $error';
       });
     }, onDone: () {
-      generating = false;
+      setState(() {
+        loading = false;
+        generating = false;
+      });
       Prefs.messages[widget.chatID.replaceFirst('chat-', '')] = allMessages!;
       Prefs.saveChats();
     });
