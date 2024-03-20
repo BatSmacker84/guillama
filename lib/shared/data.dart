@@ -1,4 +1,8 @@
+import 'dart:io';
+import 'dart:convert';
+
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'package:guillama/models/model.dart';
 import 'package:guillama/models/message.dart';
@@ -64,16 +68,67 @@ class Prefs {
   // Application specific data
   static List<Model> models = [];
   static Map<String, List<Message>> messages = {};
-  static Map<String, Stream<dynamic>> downloads = {};
+  static Map<String, Stream> downloads = {};
 
   static void addDownload(String modelID, Stream<dynamic> stream) {
     downloads[modelID] = stream;
   }
 
-  static void createChat(String modelID, String chatName) {
+  // Store data in local files
+  static Future<String> localPath() async {
+    final directory = await getApplicationDocumentsDirectory();
+    return directory.path;
+  }
+
+  static Future<File> localFile(String file) async {
+    final path = await localPath();
+    return File('$path/$file');
+  }
+
+  static Future<void> createChat(String modelID, String chatName) async {
     String chatID = '${modelID}_$chatName';
-    addToStringList('chats', chatID);
     messages[chatID] = [];
-    setStringList(chatID, []);
+
+    // Save the chatID to the list of chats
+    addToStringList('chats', chatID);
+
+    // Create data file for the chat
+    final chatFile = await localFile('$chatID.json');
+    await chatFile.writeAsString('[]');
+  }
+
+  static Future<void> deleteChat(String chatID) async {
+    // Remove the chatID from the list of chats
+    removeFromStringList('chats', chatID);
+
+    // Delete the data file for the chat
+    final chatFile = await localFile('$chatID.json');
+    await chatFile.delete();
+  }
+
+  static Future<void> saveChats() async {
+    final chats = getStringList('chats');
+
+    for (final chatID in chats!) {
+      final chatFile = await localFile('$chatID.json');
+      // Create a string from the list of messages formatted as JSON
+      final chatData = jsonEncode(messages[chatID]);
+      await chatFile.writeAsString(chatData);
+    }
+  }
+
+  static Future<void> loadChats() async {
+    final chats = getStringList('chats');
+
+    for (final chatID in chats ?? []) {
+      // Load chat data from file
+      final chatFile = await localFile('$chatID.json');
+      final chatData = await chatFile.readAsString();
+
+      // Convert chat data from string to json and store in messages
+      final chatMessages = jsonDecode(chatData);
+      messages[chatID] =
+          chatMessages.map<Message>((msg) => Message.fromJson(msg)).toList();
+    }
   }
 }

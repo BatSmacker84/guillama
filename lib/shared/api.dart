@@ -5,6 +5,7 @@ import 'package:native_dio_adapter/native_dio_adapter.dart';
 
 import 'package:guillama/shared/data.dart';
 import 'package:guillama/models/model.dart';
+import 'package:guillama/models/message.dart';
 
 // API class to handle all the API calls
 class API {
@@ -165,5 +166,63 @@ class API {
 
     // If the response is 200, the model was deleted
     return response.statusCode == 200;
+  }
+
+  // Send a message to a specified ollama model
+  static Stream sendMessage(String modelID, String message) async* {
+    // Create a new Dio instance
+    final dio = Dio();
+    dio.httpClientAdapter = NativeAdapter();
+
+    // Construct the url from server address and port
+    final http = Prefs.getBool('https') ?? false ? 'https' : 'http';
+    final serverAddress = Prefs.getString('serverAddress') ?? 'localhost';
+    final serverPort = Prefs.getInt('serverPort') ?? 11434;
+    final url = '$http://$serverAddress:$serverPort/api/generate';
+
+    // Prepare the request body
+    final body = {
+      'model': modelID,
+      'prompt': message,
+    };
+
+    // Send a POST request to the server
+    final response = await dio.post<ResponseBody>(url,
+        data: body, options: Options(responseType: ResponseType.stream));
+
+    // Yield the response
+    yield* utf8.decoder
+        .bind(response.data!.stream)
+        .transform(const LineSplitter())
+        .map((line) => jsonDecode(line));
+  }
+
+  // Send a chat message with history to a specified ollama model
+  static Stream sendChat(String modelID, List<Message> chatHistory) async* {
+    // Create a new Dio instance
+    final dio = Dio();
+    dio.httpClientAdapter = NativeAdapter();
+
+    // Construct the url from server address and port
+    final http = Prefs.getBool('https') ?? false ? 'https' : 'http';
+    final serverAddress = Prefs.getString('serverAddress') ?? 'localhost';
+    final serverPort = Prefs.getInt('serverPort') ?? 11434;
+    final url = '$http://$serverAddress:$serverPort/api/chat';
+
+    // Prepare the request body
+    final body = {
+      'model': modelID,
+      'messages': chatHistory.map((message) => message.toJson()).toList(),
+    };
+
+    // Send a POST request to the server
+    final response = await dio.post<ResponseBody>(url,
+        data: body, options: Options(responseType: ResponseType.stream));
+
+    // Yield the response
+    yield* utf8.decoder
+        .bind(response.data!.stream)
+        .transform(const LineSplitter())
+        .map((line) => jsonDecode(line));
   }
 }

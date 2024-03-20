@@ -31,9 +31,13 @@ Future<void> main() async {
 
   // Check if first start
   if (Prefs.getString('serverAddress') == null ||
-      Prefs.getInt('serverPort') == null) {
+      Prefs.getInt('serverPort') == null ||
+      Prefs.getBool('https') == null) {
     Prefs.setBool('firstStart', true);
   }
+
+  // Load data from files
+  await Prefs.loadChats();
 
   // Remove the splash screen
   FlutterNativeSplash.remove();
@@ -99,7 +103,7 @@ class _GUILlamaState extends State<GUILlama> {
       BeamGuard(
         pathPatterns: ['/start'],
         guardNonMatching: true,
-        check: (context, state) => Prefs.getBool('firstStart') ?? true,
+        check: (context, state) => !(Prefs.getBool('firstStart') ?? true),
         beamToNamed: (origin, target) => '/start',
       ),
     ],

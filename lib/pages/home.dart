@@ -48,8 +48,8 @@ class _HomeState extends State<Home> {
           ),
         ],
       ),
-      body: chats == null
-          ? Center(child: PlatformCircularProgressIndicator())
+      body: chats == null || chats!.isEmpty
+          ? Center(child: PlatformText('No chats'))
           : ListView.builder(
               itemCount: chats!.length,
               itemBuilder: (context, index) {

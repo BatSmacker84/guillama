@@ -8,7 +8,7 @@ part 'message.g.dart';
 @JsonSerializable()
 class Message {
   final String role;
-  final String content;
+  String content;
 
   @JsonKey(includeIfNull: false)
   final List<String>? images;

@@ -59,7 +59,7 @@ class _StartState extends State<Start> {
   }
 
   void toHome() {
-    Prefs.setBool('hasStarted', false);
+    Prefs.setBool('firstStart', false);
     Beamer.of(context).beamToNamed('/');
   }
 
