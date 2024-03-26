@@ -11,6 +11,7 @@ import 'package:guillama/models/message.dart';
 class API {
   // Connect to the ollama server
   static Future<bool> connect() async {
+    print('Connecting to the server');
     // Create a new Dio instance
     final dio = Dio();
     dio.httpClientAdapter = NativeAdapter();
@@ -21,8 +22,15 @@ class API {
     final serverPort = Prefs.getInt('serverPort') ?? 11434;
     final url = '$http://$serverAddress:$serverPort';
 
-    // Send a GET request to the server
-    final response = await dio.get(url);
+    final Response response;
+
+    try {
+      // Send a GET request to the server
+      response = await dio.get(url);
+      print(response.data);
+    } catch (e) {
+      return false;
+    }
 
     // If the response is 200, the server is reachable
     return response.statusCode == 200;

@@ -111,7 +111,7 @@ class _ChatState extends State<Chat> {
                                       padding: const EdgeInsets.all(10),
                                       decoration: BoxDecoration(
                                         color: Theme.of(context)
-                                            .dialogBackgroundColor,
+                                            .primaryColor,
                                         borderRadius: BorderRadius.circular(10),
                                       ),
                                       child: PlatformText(
